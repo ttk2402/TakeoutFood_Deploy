@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cart-db-persistent-volume
+spec:
+  capacity:
+    storage: {{ .Values.cart_db.persistentVolume.capacity.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.cart_db.persistentVolume.hostPath.path }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cart-db-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.cart_db.persistentVolumeClaim.resources.requests.storage }}
+

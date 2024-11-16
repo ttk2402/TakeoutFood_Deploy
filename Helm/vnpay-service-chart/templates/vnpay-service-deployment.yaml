@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vnpay-service
+  labels:
+    app: vnpay-service
+spec:
+  replicas: {{ .Values.vnpay_service.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: vnpay-service
+  template:
+    metadata:
+      labels:
+        app: vnpay-service
+    spec:
+      containers:
+      - name: vnpay-service
+        image: {{ .Values.vnpay_service.deployment.image }}
+        ports:
+        - containerPort: {{ .Values.vnpay_service.deployment.ports.containerPort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vnpay-service
+spec:
+  type: ClusterIP
+  selector:
+    app: vnpay-service
+  ports:
+    - port: {{ .Values.vnpay_service.service.ports.port }}
+      targetPort: {{ .Values.vnpay_service.service.ports.targetPort }}

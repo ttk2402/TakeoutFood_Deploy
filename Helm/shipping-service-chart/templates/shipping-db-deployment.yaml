@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-db
+spec:
+  selector:
+    matchLabels:
+      app: shipping-db
+  template:
+    metadata:
+      labels:
+        app: shipping-db
+    spec:
+      containers:
+        - name: shipping-db
+          image: {{ .Values.shipping_db.deployment.image }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shipping-service-secret
+                  key: ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: shipping-service-configmap
+                  key: SHIPPING_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: shipping-service-configmap
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shipping-service-secret
+                  key: USER_PASSWORD
+          ports:
+            - containerPort: {{ .Values.shipping_db.deployment.ports.containerPort }}
+          volumeMounts:
+            - name: shipping-db-persistent-storage
+              mountPath: {{ .Values.shipping_db.deployment.volumeMounts.mountPath }}
+      volumes:
+        - name: shipping-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: shipping-db-persistent-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-db
+spec:
+  ports:
+    - port: {{ .Values.shipping_db.service.ports.port }}
+  selector:
+    app: shipping-db

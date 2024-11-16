@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vnpay-service
+  labels:
+    app: vnpay-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vnpay-service
+  template:
+    metadata:
+      labels:
+        app: vnpay-service
+    spec:
+      containers:
+      - name: vnpay-service
+        image: ttkien2402/vnpay-service
+        ports:
+        - containerPort: 8085
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vnpay-service
+spec:
+  type: ClusterIP
+  selector:
+    app: vnpay-service
+  ports:
+    - port: 8085
+      targetPort: 8085

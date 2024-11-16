@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-configmap
+data:
+  MYSQL_USER: {{ .Values.configmap.data.MYSQL_USER }}
+  ORDER_DATABASE: {{ .Values.configmap.data.ORDER_DATABASE }}

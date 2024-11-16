@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-configmap
+data:
+  MYSQL_USER: {{ .Values.configmap.data.MYSQL_USER }}
+  PRODUCT_DATABASE: {{ .Values.configmap.data.PRODUCT_DATABASE }}

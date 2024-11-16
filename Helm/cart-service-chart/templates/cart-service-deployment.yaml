@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+spec:
+  replicas: {{ .Values.cart_service.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+    spec:
+      containers:
+      - name: cart-service
+        image: {{ .Values.cart_service.deployment.image }}
+        ports:
+        - containerPort: {{ .Values.cart_service.deployment.ports.containerPort }}
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: cart-service-configmap
+              key: CART_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: cart-service-configmap
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cart-service-secret
+              key: USER_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+spec:
+  type: ClusterIP
+  selector:
+    app: cart-service
+  ports:
+    - port: {{ .Values.cart_service.service.ports.port }}
+      targetPort: {{ .Values.cart_service.service.ports.targetPort }}

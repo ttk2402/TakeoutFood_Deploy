@@ -1,0 +1,13 @@
+replicaCount: 1
+
+vnpay_service:
+  deployment:
+    replicas: 1
+    image: ttkien2402/vnpay-service
+    ports:
+      containerPort: 8085
+  service:
+    ports:
+      port: 8085
+      targetPort: 8085
+

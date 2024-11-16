@@ -1,0 +1,43 @@
+replicaCount: 1
+
+secret:
+  data: 
+    ROOT_PASSWORD: a2llbnRyYW4=
+    USER_PASSWORD: a2llbnRyYW4=
+
+configmap:
+  data: 
+    MYSQL_USER: kientran
+    SHIPPING_DATABASE: shippingdb
+
+shipping_db:
+  persistentVolume:
+    capacity:
+      storage: 1Gi
+    hostPath:
+      path: /data/mysql
+  persistentVolumeClaim:
+    resources:
+      requests:
+        storage: 1Gi
+  deployment:
+    image: mysql:8.0.32
+    ports:
+      containerPort: 3306
+    volumeMounts:
+      mountPath: /var/lib/mysql
+  service:
+    ports:
+      port: 3306
+
+shipping_service:
+  deployment:
+    replicas: 1
+    image: ttkien2402/shipping-service
+    ports:
+      containerPort: 8086
+  service:
+    ports:
+      port: 8086
+      targetPort: 8086
+

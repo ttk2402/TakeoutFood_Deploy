@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping-service
+spec:
+  replicas: {{ .Values.shipping_service.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: shipping-service
+  template:
+    metadata:
+      labels:
+        app: shipping-service
+    spec:
+      containers:
+      - name: shipping-service
+        image: {{ .Values.shipping_service.deployment.image }}
+        ports:
+        - containerPort: {{ .Values.shipping_service.deployment.ports.containerPort }}
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: shipping-service-configmap
+              key: SHIPPING_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: shipping-service-configmap
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: shipping-service-secret
+              key: USER_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping-service
+spec:
+  type: ClusterIP
+  selector:
+    app: shipping-service
+  ports:
+    - port: {{ .Values.shipping_service.service.ports.port }}
+      targetPort: {{ .Values.shipping_service.service.ports.targetPort }}

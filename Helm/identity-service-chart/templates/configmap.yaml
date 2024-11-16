@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: identity-service-configmap
+data:
+  MYSQL_USER: {{ .Values.configmap.data.MYSQL_USER }}
+  IDENTITY_DATABASE: {{ .Values.configmap.data.IDENTITY_DATABASE }}

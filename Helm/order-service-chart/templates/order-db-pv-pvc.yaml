@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: order-db-persistent-volume
+spec:
+  capacity:
+    storage: {{ .Values.order_db.persistentVolume.capacity.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.order_db.persistentVolume.hostPath.path }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: order-db-persistent-volume-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.order_db.persistentVolumeClaim.resources.requests.storage }}
+

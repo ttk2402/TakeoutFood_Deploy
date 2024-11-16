@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cart-service-configmap
+data:
+  MYSQL_USER: {{ .Values.configmap.data.MYSQL_USER }}
+  CART_DATABASE: {{ .Values.configmap.data.CART_DATABASE }}

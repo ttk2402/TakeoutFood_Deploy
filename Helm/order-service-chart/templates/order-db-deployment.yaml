@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-db
+spec:
+  selector:
+    matchLabels:
+      app: order-db
+  template:
+    metadata:
+      labels:
+        app: order-db
+    spec:
+      containers:
+        - name: order-db
+          image: {{ .Values.order_db.deployment.image }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: order-service-secret
+                  key: ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-configmap
+                  key: ORDER_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: order-service-configmap
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: order-service-secret
+                  key: USER_PASSWORD
+          ports:
+            - containerPort: {{ .Values.order_db.deployment.ports.containerPort }}
+          volumeMounts:
+            - name: order-db-persistent-storage
+              mountPath: {{ .Values.order_db.deployment.volumeMounts.mountPath }}
+      volumes:
+        - name: order-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: order-db-persistent-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-db
+spec:
+  ports:
+    - port: {{ .Values.order_db.service.ports.port }}
+  selector:
+    app: order-db

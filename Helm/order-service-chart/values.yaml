@@ -1,0 +1,43 @@
+replicaCount: 1
+
+secret:
+  data: 
+    ROOT_PASSWORD: a2llbnRyYW4=
+    USER_PASSWORD: a2llbnRyYW4=
+
+configmap:
+  data: 
+    MYSQL_USER: kientran
+    ORDER_DATABASE: orderdb
+
+order_db:
+  persistentVolume:
+    capacity:
+      storage: 1Gi
+    hostPath:
+      path: /data/mysql
+  persistentVolumeClaim:
+    resources:
+      requests:
+        storage: 1Gi
+  deployment:
+    image: mysql:8.0.32
+    ports:
+      containerPort: 3306
+    volumeMounts:
+      mountPath: /var/lib/mysql
+  service:
+    ports:
+      port: 3306
+
+order_service:
+  deployment:
+    replicas: 1
+    image: ttkien2402/order-service
+    ports:
+      containerPort: 8084
+  service:
+    ports:
+      port: 8084
+      targetPort: 8084
+

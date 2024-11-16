@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+data:
+  MYSQL_USER: kientran
+  IDENTITY_DATABASE: identitydb
+  PRODUCT_DATABASE: productdb
+  CART_DATABASE: cartdb
+  ORDER_DATABASE: orderdb
+  SHIPPING_DATABASE: shippingdb

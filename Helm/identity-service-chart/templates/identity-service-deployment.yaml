@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-service
+spec:
+  replicas: {{ .Values.identity_service.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: identity-service
+  template:
+    metadata:
+      labels:
+        app: identity-service
+    spec:
+      containers:
+      - name: identity-service
+        image: {{ .Values.identity_service.deployment.image }}
+        ports:
+        - containerPort: {{ .Values.identity_service.deployment.ports.containerPort }}
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: identity-service-configmap
+              key: IDENTITY_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: identity-service-configmap
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: identity-service-secret
+              key: USER_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-service
+spec:
+  type: ClusterIP
+  selector:
+    app: identity-service
+  ports:
+    - port: {{ .Values.identity_service.service.ports.port }}
+      targetPort: {{ .Values.identity_service.service.ports.targetPort }}

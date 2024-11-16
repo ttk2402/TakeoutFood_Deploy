@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-db
+spec:
+  selector:
+    matchLabels:
+      app: product-db
+  template:
+    metadata:
+      labels:
+        app: product-db
+    spec:
+      containers:
+        - name: product-db
+          image: mysql:8.0.32
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: PRODUCT_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: USER_PASSWORD
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: product-db-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: product-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: product-db-persistent-volume-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: product-db

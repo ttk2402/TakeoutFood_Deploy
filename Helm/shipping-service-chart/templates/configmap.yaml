@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shipping-service-configmap
+data:
+  MYSQL_USER: {{ .Values.configmap.data.MYSQL_USER }}
+  SHIPPING_DATABASE: {{ .Values.configmap.data.SHIPPING_DATABASE }}
